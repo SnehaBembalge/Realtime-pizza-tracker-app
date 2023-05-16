@@ -38,3 +38,14 @@ section.hero {
         color: $pure;
     }
 }
+
+.btn-primary {
+    background: $primary;
+    &:hover{
+        background: $primary-hover;
+    }
+}
+
+section.cart {
+    background-color: $secondary;
+}
