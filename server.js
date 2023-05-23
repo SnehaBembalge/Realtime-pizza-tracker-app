@@ -3,7 +3,7 @@ const app = express()
 const ejs = require('ejs')
 const path = require('path')
 const expressLayout = require('express-ejs-layouts')
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3300
 
 //set Template engine
 app.use(expressLayout)
@@ -20,8 +20,6 @@ app.get('/',(req,res) =>{
 app.get('/cart', (req,res) => {
     res.render('customers/cart')
 })
-
-
 
 app.listen(PORT, () =>{
     console.log(`Listening on port ${PORT}`)
