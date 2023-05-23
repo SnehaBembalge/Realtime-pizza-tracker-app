@@ -3,7 +3,7 @@ const app = express()
 const ejs = require('ejs')
 const path = require('path')
 const expressLayout = require('express-ejs-layouts')
-const PORT = process.env.PORT || 3300
+const PORT = process.env.PORT || 3000
 
 //set Template engine
 app.use(expressLayout)
