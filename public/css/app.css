@@ -306,6 +306,6 @@ section.login a:hover {
 }
 
 .noty_theme_mint {
-  border-radius: 50px;
-  padding-left: 8px;
+  border-radius: 50px !important;
+  padding-left: 8px !important;
 }
