@@ -34,7 +34,26 @@ function cartController() {
                 }
 
             return res.json({ totalQty: req.session.cart.totalQty })
-        }
+        },
+
+        removePizzaFromCart(req, res) {
+            const { pizzaId } = req.body;
+            const cart = req.session.cart;
+      
+            if (cart && cart.items[pizzaId]) {
+                const removedItem = cart.items[pizzaId];
+                removedItem.qty--; // Decrease the quantity by 1
+                cart.totalQty--; // Decrease the total quantity by 1
+                cart.totalPrice -= removedItem.item.price; // Decrease the total price by the price of the item
+            
+                if (removedItem.qty === 0) {
+                  delete cart.items[pizzaId]; // If the quantity becomes zero, remove the item from the cart
+                }
+              }
+      
+            req.flash('success', 'Pizza removed from cart.');
+            return res.redirect('/cart');
+          }
     }
 }
 

@@ -15,9 +15,18 @@ export function initAdmin(socket) {
     orders = res.data
     markup = generateMarkup(orders)
     orderTableBody.innerHTML = markup
-  }).catch(err => {
-    console.log(err)
-  })
+    // Add event listener to remove links
+  const removeLinks = document.querySelectorAll('.remove-link');
+  removeLinks.forEach((link) => {
+    link.addEventListener('click', function (event) {
+      event.preventDefault();
+      const orderId = this.getAttribute('data-order-id');
+      removePizzaFromCart(orderId);
+    });
+  });
+}).catch((err) => {
+    console.log(err);
+  });
 
   function renderItems(items) {
     let parsedItems = Object.values(items)
@@ -29,7 +38,6 @@ export function initAdmin(socket) {
   }
 
   function generateMarkup(orders) {
-
     return orders.map(order => {
       return `
         <tr>
@@ -72,7 +80,6 @@ export function initAdmin(socket) {
           <td class="border px-4 py-2">
             ${moment(order.createdAt).format('hh:mm A')}
           </td>
-          
         </tr>
       `
     }).join('')
@@ -80,7 +87,7 @@ export function initAdmin(socket) {
 
   //Socket
 
-  Socket.on('orderPlaced', (order) => {
+  socket.on('orderPlaced', (order) => {
     new Noty({
       type: 'success',
       timeout: 1000,

@@ -32,6 +32,15 @@ function initAdmin(socket) {
     orders = res.data;
     markup = generateMarkup(orders);
     orderTableBody.innerHTML = markup;
+    // Add event listener to remove links
+    var removeLinks = document.querySelectorAll('.remove-link');
+    removeLinks.forEach(function (link) {
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        var orderId = this.getAttribute('data-order-id');
+        removePizzaFromCart(orderId);
+      });
+    });
   })["catch"](function (err) {
     console.log(err);
   });
@@ -43,13 +52,13 @@ function initAdmin(socket) {
   }
   function generateMarkup(orders) {
     return orders.map(function (order) {
-      return "\n        <tr>\n          <td class=\"border px-4 py-2 text-green-900\">\n            <p>".concat(order._id, "</p>\n            <div>").concat(renderItems(order.items), "</div>\n          </td>\n          <td class=\"border px-4 py-2\">").concat(order.customerId.name, "</td>\n          <td class=\"border px-4 py-2\">").concat(order.address, "</td>\n          <td class=\"border px-4 py-2\">\n            <div class=\"inline-block relative w-64\">\n              <form action=\"/admin/order/status\" method=\"POST\">\n                <input type=\"hidden\" name=\"orderId\" value=\"").concat(order._id, "\">\n                <select name=\"status\" onchange=\"this.form.submit()\"\n                  class=\"block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline\">\n                  <option value=\"order_placed\" ").concat(order.status === 'order_placed' ? 'selected' : '', ">\n                    Placed\n                  </option>\n                  <option value=\"confirmed\" ").concat(order.status === 'confirmed' ? 'selected' : '', ">\n                    Confirmed\n                  </option>\n                  <option value=\"prepared\" ").concat(order.status === 'prepared' ? 'selected' : '', ">\n                    Prepared\n                  </option>\n                  <option value=\"delivered\" ").concat(order.status === 'delivered' ? 'selected' : '', ">\n                    Delivered\n                  </option>\n                  <option value=\"completed\" ").concat(order.status === 'completed' ? 'selected' : '', ">\n                    Completed\n                  </option>\n                </select>\n              </form>\n              <div class=\"pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700\">\n                <svg class=\"fill-current h-4 w-4\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\">\n                  <path d=\"M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z\" />\n                </svg>\n              </div>\n            </div>\n          </td>\n          <td class=\"border px-4 py-2\">\n            ").concat(moment__WEBPACK_IMPORTED_MODULE_0___default()(order.createdAt).format('hh:mm A'), "\n          </td>\n          \n        </tr>\n      ");
+      return "\n        <tr>\n          <td class=\"border px-4 py-2 text-green-900\">\n            <p>".concat(order._id, "</p>\n            <div>").concat(renderItems(order.items), "</div>\n          </td>\n          <td class=\"border px-4 py-2\">").concat(order.customerId.name, "</td>\n          <td class=\"border px-4 py-2\">").concat(order.address, "</td>\n          <td class=\"border px-4 py-2\">\n            <div class=\"inline-block relative w-64\">\n              <form action=\"/admin/order/status\" method=\"POST\">\n                <input type=\"hidden\" name=\"orderId\" value=\"").concat(order._id, "\">\n                <select name=\"status\" onchange=\"this.form.submit()\"\n                  class=\"block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline\">\n                  <option value=\"order_placed\" ").concat(order.status === 'order_placed' ? 'selected' : '', ">\n                    Placed\n                  </option>\n                  <option value=\"confirmed\" ").concat(order.status === 'confirmed' ? 'selected' : '', ">\n                    Confirmed\n                  </option>\n                  <option value=\"prepared\" ").concat(order.status === 'prepared' ? 'selected' : '', ">\n                    Prepared\n                  </option>\n                  <option value=\"delivered\" ").concat(order.status === 'delivered' ? 'selected' : '', ">\n                    Delivered\n                  </option>\n                  <option value=\"completed\" ").concat(order.status === 'completed' ? 'selected' : '', ">\n                    Completed\n                  </option>\n                </select>\n              </form>\n              <div class=\"pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700\">\n                <svg class=\"fill-current h-4 w-4\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\">\n                  <path d=\"M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z\" />\n                </svg>\n              </div>\n            </div>\n          </td>\n          <td class=\"border px-4 py-2\">\n            ").concat(moment__WEBPACK_IMPORTED_MODULE_0___default()(order.createdAt).format('hh:mm A'), "\n          </td>\n        </tr>\n      ");
     }).join('');
   }
 
   //Socket
 
-  Socket.on('orderPlaced', function (order) {
+  socket.on('orderPlaced', function (order) {
     new (noty__WEBPACK_IMPORTED_MODULE_1___default())({
       type: 'success',
       timeout: 1000,
@@ -119,6 +128,22 @@ addToCart.forEach(function (btn) {
     updateCart(pizza);
   });
 });
+var deleteForms = document.querySelectorAll('.deleteCartButton');
+deleteForms.forEach(function (form) {
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var pizzaId = form.querySelector('input[name="pizzaId"]').value;
+    axios__WEBPACK_IMPORTED_MODULE_3__["default"].post('/cart/remove-pizza', {
+      pizzaId: pizzaId
+    }).then(function (res) {
+      console.log(res);
+      // Optionally, you can update the cart counter or perform any other action
+      location.reload(); // Reload the page to reflect the updated cart
+    })["catch"](function (err) {
+      console.error(err);
+    });
+  });
+});
 
 //Remove alert message after X seconds
 var alertMsg = document.querySelector('#success-alert');
@@ -159,13 +184,14 @@ updateStatus(order);
 
 //Socket
 var socket = io();
-(0,_admin__WEBPACK_IMPORTED_MODULE_1__.initAdmin)(socket);
+
 //Join
 if (order) {
   socket.emit('join', "order_".concat(order._id));
 }
 var adminAreaPath = window.location.pathname;
 if (adminAreaPath.includes('admin')) {
+  (0,_admin__WEBPACK_IMPORTED_MODULE_1__.initAdmin)(socket);
   socket.emit('join', 'adminRoom');
 }
 socket.on('orderUpdated', function (data) {

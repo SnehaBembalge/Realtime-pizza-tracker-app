@@ -1,6 +1,7 @@
 @import './variables';
 @import '~noty/src/noty.scss';
 @import '~noty/src/themes/mint.scss';
+@import '~@fortawesome/fontawesome-free/scss/fontawesome';
 
 body{
     font-family: 'Lato',sans-serif;
@@ -189,5 +190,23 @@ section.status {
 
 .status-box ul li small {
     float: right;
-    font-size: 14px;margin-top: 8px;
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+@media(max-width: 1060px) {
+    .container {
+        max-width: 90%;
+    }
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+@media(max-width: 768px) {
+    .status-box ul li span:before {
+        font-size: 34px;
+    }
 }

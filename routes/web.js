@@ -23,6 +23,7 @@ function initRoutes(app) {
 
     app.get('/cart', cartController().index)
     app.post('/update-cart', cartController().update)
+    app.post('/cart/remove-pizza', cartController().removePizzaFromCart)
 
     //Customer routes
     app.post('/orders', auth, orderController().store)

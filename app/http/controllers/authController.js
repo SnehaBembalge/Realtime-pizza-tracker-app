@@ -79,10 +79,6 @@ function authController() {
                     return res.redirect('/register')
             })  
         },
-        //logout(req, res) {
-          //  req.logout()
-            //return res.redirect('/login')
-        //}
 
         logout(req, res) {
             req.logout((err) => {

@@ -34,6 +34,26 @@ addToCart.forEach((btn) => {
     })
 })
 
+const deleteForms = document.querySelectorAll('.deleteCartButton');
+
+deleteForms.forEach((form) => {
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const pizzaId = form.querySelector('input[name="pizzaId"]').value;
+
+    axios.post('/cart/remove-pizza', { pizzaId })
+      .then((res) => {
+        console.log(res);
+        // Optionally, you can update the cart counter or perform any other action
+        location.reload(); // Reload the page to reflect the updated cart
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  });
+});
+  
 //Remove alert message after X seconds
 const alertMsg = document.querySelector('#success-alert')
 if(alertMsg) {
@@ -75,13 +95,14 @@ updateStatus(order);
 
 //Socket
 let socket = io()
-initAdmin(socket)
+
 //Join
 if(order) {
     socket.emit('join', `order_${order._id}`)
 }
 let adminAreaPath = window.location.pathname
 if(adminAreaPath.includes('admin')) {
+    initAdmin(socket)
     socket.emit('join', 'adminRoom')
 }
 
