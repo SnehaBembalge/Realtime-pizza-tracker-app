@@ -33,7 +33,7 @@ function orderController () {
 
                   //Stripe payment
                   if(paymentType === 'card') {
-                    stripe.paymentIntents.create({
+                    stripe.charges.create({
                         amount: req.session.cart.totalPrice  * 100,
                         source: stripeToken,
                         currency: 'inr',
